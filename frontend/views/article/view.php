@@ -26,18 +26,10 @@ $this->params['breadcrumbs'][] = $this->title;
         ]) ?>
     </p>
 
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'id',
-            'title',
-            'brief:ntext',
-            'content:ntext',
-            'user_id',
-            'status',
-            'created_at',
-            'updated_at',
-        ],
-    ]) ?>
+    <?= $model->content; ?>
+
+    <br><br>
+    <p>Author: <?= $model->user->username; ?>
+    <p> Date: <?= Yii::$app->formatter->asDatetime($model->created_at, "php:d-m-Y  H:i:s"); ?></p>
 
 </div>
