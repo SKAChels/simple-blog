@@ -49,9 +49,9 @@ class Article extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['title', 'content', 'user_id', 'created_at', 'updated_at'], 'required'],
+            [['title', 'content', 'user_id'], 'required'],
             [['brief', 'content'], 'string'],
-            [['user_id', 'status', 'created_at', 'updated_at'], 'integer'],
+            [['user_id', 'status'], 'integer'],
             ['status', 'in', 'range' => [self::STATUS_DRAFT, self::STATUS_DELETED]],
             [['title'], 'string', 'max' => 255],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],

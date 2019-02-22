@@ -1,6 +1,8 @@
 <?php
 namespace frontend\controllers;
 
+use common\models\Article;
+use common\models\ArticleSearch;
 use Yii;
 use yii\base\InvalidArgumentException;
 use yii\web\BadRequestHttpException;
@@ -72,7 +74,13 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $searchModel = new ArticleSearch(['status' => Article::STATUS_PUBLIC]);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
     }
 
     /**
