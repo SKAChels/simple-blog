@@ -43,8 +43,8 @@ class Comment extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['article_id', 'content', 'author', 'created_at', 'updated_at'], 'required'],
-            [['article_id', 'created_at', 'updated_at'], 'integer'],
+            [['article_id', 'content', 'author'], 'required'],
+            [['article_id'], 'integer'],
             [['content'], 'string'],
             [['author'], 'string', 'max' => 128],
             [['article_id'], 'exist', 'skipOnError' => true, 'targetClass' => Article::className(), 'targetAttribute' => ['article_id' => 'id']],
