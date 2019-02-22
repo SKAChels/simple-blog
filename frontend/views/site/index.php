@@ -11,7 +11,7 @@ $this->title = 'Articles';
 
 <h1><?= Html::encode($this->title) ?></h1>
 <?php Pjax::begin(); ?>
-<?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+<?php //echo $this->render('/article/_search', ['model' => $searchModel]); ?>
 
 <p>
     <?= Html::a('Add Article', ['article/create'], ['class' => 'btn btn-success']) ?>
@@ -24,12 +24,15 @@ $this->title = 'Articles';
 
         'title',
         'brief:ntext',
-        'user_id',
+        [
+            'label' => 'Author',
+            'attribute' => 'user_id',
+            'value' => 'user.username'
+        ],
+        'created_at:datetime',
+        'updated_at:datetime',
 
-        'created_at',
-        'updated_at',
-
-        ['class' => 'yii\grid\ActionColumn'],
+        ['class' => 'yii\grid\ActionColumn', 'controller' => 'article'],
     ],
 ]); ?>
 <?php Pjax::end(); ?>

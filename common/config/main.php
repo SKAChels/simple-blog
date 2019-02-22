@@ -9,5 +9,10 @@ return [
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
+        'formatter' => [
+            'dateFormat' => 'd-MM-Y',
+            'datetimeFormat' => 'd-MM-Y H:i:s',
+            'timeFormat' => 'H:i:s',
+        ],
     ],
 ];

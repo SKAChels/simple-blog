@@ -74,7 +74,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new ArticleSearch(['status' => Article::STATUS_PUBLIC]);
+        $searchModel = new ArticleSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [

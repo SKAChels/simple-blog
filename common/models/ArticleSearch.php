@@ -17,8 +17,7 @@ class ArticleSearch extends Article
     public function rules()
     {
         return [
-            [['id', 'user_id', 'status', 'created_at', 'updated_at'], 'integer'],
-            [['title', 'brief', 'content'], 'safe'],
+            [['user_id', 'created_at', 'updated_at'], 'integer'],
         ];
     }
 
@@ -46,6 +45,7 @@ class ArticleSearch extends Article
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => ['attributes' => ['user_id', 'created_at', 'updated_at']]
         ]);
 
         $this->load($params);
@@ -58,16 +58,10 @@ class ArticleSearch extends Article
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
             'user_id' => $this->user_id,
-            'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ]);
-
-        $query->andFilterWhere(['like', 'title', $this->title])
-            ->andFilterWhere(['like', 'brief', $this->brief])
-            ->andFilterWhere(['like', 'content', $this->content]);
 
         return $dataProvider;
     }
