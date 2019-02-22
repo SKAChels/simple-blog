@@ -2,10 +2,13 @@
 
 namespace frontend\controllers;
 
+use common\models\Comment;
 use common\models\User;
 use Yii;
 use common\models\Article;
 use common\models\ArticleSearch;
+use yii\data\Pagination;
+use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -47,7 +50,14 @@ class ArticleController extends Controller
      */
     public function actionView($id)
     {
+        $comments_query = Comment::find()->where(['article_id' => $id])->orderBy(['created_at' => SORT_DESC]);
+        $pagination = new Pagination(['totalCount' => $comments_query->count(), 'pageSize' => 10]);
+        $comments = $comments_query->offset($pagination->offset)
+            ->limit($pagination->limit)
+            ->all();
         return $this->render('view', [
+            'comments' => $comments,
+            'pagination' => $pagination,
             'model' => $this->findModel($id),
         ]);
     }
@@ -66,8 +76,6 @@ class ArticleController extends Controller
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         }
-
-        var_dump($model->errors);
 
         return $this->render('create', [
             'model' => $model,
@@ -106,6 +114,32 @@ class ArticleController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+    }
+
+    /**
+     * @return string
+     * @throws BadRequestHttpException
+     */
+    public function actionCreateComment()
+    {
+        if (Yii::$app->request->isAjax) {
+            $model = new Comment();
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                return $this->renderPartial('_comment', [
+                    'model' => new Comment(),
+                    'article' => $model->article_id,
+                    'success_message' => true,
+                ]);
+            }
+
+            return $this->renderPartial('_comment', [
+                'model' => $model,
+                'article' => $model->article_id,
+                'success_message' => false,
+            ]);
+        }
+
+        throw new BadRequestHttpException();
     }
 
     /**

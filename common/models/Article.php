@@ -52,7 +52,7 @@ class Article extends \yii\db\ActiveRecord
             [['title', 'content', 'user_id'], 'required'],
             [['brief', 'content'], 'string'],
             [['user_id', 'status'], 'integer'],
-            ['status', 'in', 'range' => [self::STATUS_DRAFT, self::STATUS_DELETED]],
+            ['status', 'in', 'range' => [self::STATUS_DRAFT, self::STATUS_PUBLIC, self::STATUS_DELETED]],
             [['title'], 'string', 'max' => 255],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
         ];

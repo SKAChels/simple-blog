@@ -1,10 +1,11 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\DetailView;
+use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Article */
+/* @var $comments array */
 
 $this->title = $model->title;
 $this->params['breadcrumbs'][] = ['label' => 'Articles', 'url' => ['index']];
@@ -30,6 +31,39 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <br><br>
     <p>Author: <?= $model->user->username; ?>
-    <p> Date: <?= Yii::$app->formatter->asDatetime($model->created_at, "php:d-m-Y  H:i:s"); ?></p>
-
+    <p>Date: <?= Yii::$app->formatter->asDatetime($model->created_at, 'php:d-m-Y  H:i:s'); ?></p>
+    <br>
+    <hr>
+    <div class="clearfix"></div>
+    <?php Pjax::begin(); ?>
+    <div class="row">
+        <div class="col-md-6"><h3>Comments</h3></div>
+        <div class="col-md-6">
+            <?php
+            echo \yii\widgets\LinkPager::widget([
+                'pagination' => $pagination,
+                'options' => ['class' => 'pagination no-margin pagination-sm pull-right'],
+            ]);
+            ?>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <?php foreach ($comments as $comment):?>
+        <div class="panel panel-info">
+            <div class="panel-heading"><?=$comment->author?>  <?=Yii::$app->formatter->asDatetime($comment->created_at, 'php:d-m-Y  H:i:s');?></div>
+            <div class="panel-body"><?=$comment->content?></div>
+        </div>
+    <?php endforeach;?>
+    <?php Pjax::end(); ?>
+    <hr>
+    <?php Pjax::begin(['enablePushState' => false]); ?>
+        <h3>Comment form</h3>
+        <?= $this->render('_comment', [
+            'model' => new \common\models\Comment(),
+            'article' => $model,
+            'success_message' => false,
+        ]);
+        ?>
+        <div class="clearfix"></div>
+    <?php Pjax::end(); ?>
 </div>
