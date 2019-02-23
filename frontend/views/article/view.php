@@ -36,26 +36,28 @@ $this->params['breadcrumbs'][] = $this->title;
     <hr>
     <div class="clearfix"></div>
     <?php Pjax::begin(); ?>
-    <div class="row">
-        <div class="col-md-6"><h3>Comments</h3></div>
-        <div class="col-md-6">
-            <?php
-            echo \yii\widgets\LinkPager::widget([
-                'pagination' => $pagination,
-                'options' => ['class' => 'pagination no-margin pagination-sm pull-right'],
-            ]);
-            ?>
-        </div>
-    </div>
-    <div class="clearfix"></div>
-    <?php foreach ($comments as $comment):?>
-        <div class="panel panel-info">
-            <div class="panel-heading"><?=$comment->author?>  <?=Yii::$app->formatter->asDatetime($comment->created_at, 'php:d-m-Y  H:i:s');?></div>
-            <div class="panel-body"><?=$comment->content?></div>
-        </div>
-    <?php endforeach;?>
+        <?php if (count($comments)):?>
+            <div class="row">
+                <div class="col-md-6"><h3>Comments</h3></div>
+                <div class="col-md-6">
+                    <?php
+                    echo \yii\widgets\LinkPager::widget([
+                        'pagination' => $pagination,
+                        'options' => ['class' => 'pagination no-margin pagination-sm pull-right'],
+                    ]);
+                    ?>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <?php foreach ($comments as $comment):?>
+                <div class="panel panel-info">
+                    <div class="panel-heading"><?=$comment->author?>  <?=Yii::$app->formatter->asDatetime($comment->created_at, 'php:d-m-Y  H:i:s');?></div>
+                    <div class="panel-body"><?=$comment->content?></div>
+                </div>
+            <?php endforeach;?>
+            <hr>
+        <?php endif;?>
     <?php Pjax::end(); ?>
-    <hr>
     <?php Pjax::begin(['enablePushState' => false]); ?>
         <h3>Comment form</h3>
         <?= $this->render('_comment', [
