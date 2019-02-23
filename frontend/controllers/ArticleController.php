@@ -66,8 +66,13 @@ class ArticleController extends Controller
         $comments = $comments_query->offset($pagination->offset)
             ->limit($pagination->limit)
             ->all();
+        $comment_model = new Comment();
+        if (isset(Yii::$app->user->identity->username)) {
+            $comment_model->author = Yii::$app->user->identity->username;
+        }
         return $this->render('view', [
             'comments' => $comments,
+            'comment_model' => $comment_model,
             'pagination' => $pagination,
             'model' => $this->findModel($id),
         ]);

@@ -16,16 +16,18 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
+    <?php if (Yii::$app->user->can('updateArticle', ['article' => $model])):?>
+        <p>
+            <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+            <?= Html::a('Delete', ['delete', 'id' => $model->id], [
+                'class' => 'btn btn-danger',
+                'data' => [
+                    'confirm' => 'Are you sure you want to delete this item?',
+                    'method' => 'post',
+                ],
+            ]) ?>
+        </p>
+    <?php endif;?>
 
     <?= $model->content; ?>
 
@@ -61,7 +63,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php Pjax::begin(['enablePushState' => false]); ?>
         <h3>Comment form</h3>
         <?= $this->render('_comment', [
-            'model' => new \common\models\Comment(),
+            'model' => $comment_model,
             'article' => $model,
             'success_message' => false,
         ]);

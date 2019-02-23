@@ -36,7 +36,9 @@ AppAsset::register($this);
         ],
     ]);
     $menuItems = [];
-    $menuItems[] = ['label' => 'Create article', 'url' => ['/article/create']];
+    if (Yii::$app->user->can('createArticle')) {
+        $menuItems[] = ['label' => 'Create article', 'url' => ['/article/create']];
+    }
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Signup', 'url' => ['/site/signup']];
         $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
