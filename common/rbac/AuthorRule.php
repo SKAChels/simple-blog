@@ -18,6 +18,6 @@ class AuthorRule extends Rule
 */
     public function execute($user, $item, $params)
     {
-        return isset($params['article']) ? $params['article']->createdBy === $user : false;
+        return isset($params['article']) ? $params['article']->user_id === $user : false;
     }
 }

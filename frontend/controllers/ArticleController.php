@@ -3,13 +3,13 @@
 namespace frontend\controllers;
 
 use common\models\Comment;
-use common\models\User;
 use Yii;
 use common\models\Article;
-use common\models\ArticleSearch;
 use yii\data\Pagination;
+use yii\filters\AccessControl;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
@@ -28,6 +28,17 @@ class ArticleController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
+                ],
+            ],
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['create'],
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['create'],
+                        'roles' => ['@'],
+                    ],
                 ],
             ],
         ];
@@ -86,12 +97,16 @@ class ArticleController extends Controller
      * Updates an existing Article model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
+     * @throws ForbiddenHttpException
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        if (!Yii::$app->user->can('updateArticle', ['article' => $model])) {
+            throw new ForbiddenHttpException('You are not allowed to edit this article');
+        }
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -108,10 +123,16 @@ class ArticleController extends Controller
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws ForbiddenHttpException
+     * @throws \Throwable
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        if (!Yii::$app->user->can('updateArticle', ['article' => $model])) {
+            throw new ForbiddenHttpException('You are not allowed to edit this article');
+        }
+        $model->delete();
 
         return $this->redirect(['index']);
     }
