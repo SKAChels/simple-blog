@@ -66,7 +66,12 @@ echo \yii\widgets\LinkPager::widget([
 <?php foreach ($dataProvider->getModels() as $article):?>
 <div class="row">
     <div class="col-md-12">
-        <h2><a data-pjax="0" href="<?= \yii\helpers\Url::to(['article/view', 'id' => $article->id]) ?>"><?=$article->title?></a></h2>
+        <h2>
+            <a data-pjax="0" href="<?= \yii\helpers\Url::to(['article/view', 'id' => $article->id]) ?>"><?=$article->title?></a>
+            <?php if ($article->status === \common\models\Article::STATUS_DRAFT):?>
+                <span style="color:#710909;font-size: 14px;"> draft</span>
+            <?endif;?>
+        </h2>
         <p>
             <?=$article->brief?>
             <br>

@@ -14,7 +14,12 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="article-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h1>
+        <?= Html::encode($this->title) ?>
+        <?php if ($model->status === \common\models\Article::STATUS_DRAFT):?>
+            <span style="color:#710909;font-size: 14px;"> draft</span>
+        <?endif;?>
+    </h1>
 
     <?php if (Yii::$app->user->can('updateArticle', ['article' => $model])):?>
         <p>

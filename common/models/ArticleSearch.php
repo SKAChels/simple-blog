@@ -62,6 +62,16 @@ class ArticleSearch extends Article
         $query = Article::find()->joinWith(['user']);
 
         // add conditions that should always apply here
+        $query->where(['<>', 'article.status', Article::STATUS_DELETED]);
+        // Show any statuses articles for admin and author (his own)
+        if (!\Yii::$app->user->can('admin')) {
+            $query->andWhere(
+                ['or',
+                    ['article.status' => Article::STATUS_PUBLIC],
+                    ['user_id' => \Yii::$app->user->id]
+                ]
+            );
+        }
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

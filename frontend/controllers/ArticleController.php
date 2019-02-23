@@ -74,7 +74,7 @@ class ArticleController extends Controller
             'comments' => $comments,
             'comment_model' => $comment_model,
             'pagination' => $pagination,
-            'model' => $this->findModel($id),
+            'model' => $this->findModelRestricted($id),
         ]);
     }
 
@@ -108,7 +108,7 @@ class ArticleController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModelRestricted($id);
         if (!Yii::$app->user->can('updateArticle', ['article' => $model])) {
             throw new ForbiddenHttpException('You are not allowed to edit this article');
         }
@@ -133,11 +133,12 @@ class ArticleController extends Controller
      */
     public function actionDelete($id)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModelRestricted($id);
         if (!Yii::$app->user->can('updateArticle', ['article' => $model])) {
             throw new ForbiddenHttpException('You are not allowed to edit this article');
         }
-        $model->delete();
+        $model->status = Article::STATUS_DELETED;
+        $model->save();
 
         return $this->redirect(['index']);
     }
@@ -179,6 +180,25 @@ class ArticleController extends Controller
     {
         if (($model = Article::findOne($id)) !== null) {
             return $model;
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    /**
+     * Finds the Article model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param integer $id
+     * @return Article the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModelRestricted($id)
+    {
+        $model = Article::findOne($id);
+        if ($model !== null && $model->status !== Article::STATUS_DELETED) {
+            if ($model->status === Article::STATUS_PUBLIC || $model->user_id === \Yii::$app->user->id || \Yii::$app->user->can('admin')) {
+                return $model;
+            }
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
