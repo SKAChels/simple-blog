@@ -2,22 +2,42 @@
 
 namespace common\models;
 
+use kartik\daterange\DateRangeBehavior;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\Article;
 
 /**
  * ArticleSearch represents the model behind the search form of `common\models\Article`.
  */
 class ArticleSearch extends Article
 {
+
+    public $user;
+    public $date_range;
+    public $date_from;
+    public $date_to;
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => DateRangeBehavior::className(),
+                'attribute' => 'date_range',
+                'dateStartAttribute' => 'date_from',
+                'dateEndAttribute' => 'date_to',
+            ]
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['user_id', 'created_at', 'updated_at'], 'integer'],
+            [['created_at'], 'integer'],
+            [['user'], 'string'],
+            [['date_range'], 'match', 'pattern' => '/^.+\s\-\s.+$/'],
         ];
     }
 
@@ -39,13 +59,23 @@ class ArticleSearch extends Article
      */
     public function search($params)
     {
-        $query = Article::find();
+        $query = Article::find()->joinWith(['user']);
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'sort' => ['attributes' => ['user_id', 'created_at', 'updated_at']]
+            'sort' => [
+                'defaultOrder' => ['created_at' => SORT_DESC],
+                'attributes' => [
+                    'user' => [
+                        'asc' => ['user.username' => SORT_ASC],
+                        'desc' => ['user.username' => SORT_DESC],
+                    ],
+                    'created_at'
+                ]
+            ],
+            'pagination' => ['pageSize' => 10],
         ]);
 
         $this->load($params);
@@ -56,12 +86,10 @@ class ArticleSearch extends Article
             return $dataProvider;
         }
 
-        // grid filtering conditions
-        $query->andFilterWhere([
-            'user_id' => $this->user_id,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-        ]);
+        $query->andFilterWhere(['like', User::tableName() . '.username', $this->user]);
+        $query->andFilterWhere(['>=', 'article.created_at', $this->date_from])
+            ->andFilterWhere(['<=', 'article.created_at', $this->date_to]);
+
 
         return $dataProvider;
     }

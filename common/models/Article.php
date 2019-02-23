@@ -25,6 +25,8 @@ class Article extends \yii\db\ActiveRecord
     const STATUS_PUBLIC = 1;
     const STATUS_DELETED = 2;
 
+    public $date_range;
+
     /**
      * {@inheritdoc}
      */
@@ -50,6 +52,7 @@ class Article extends \yii\db\ActiveRecord
     {
         return [
             [['title', 'content', 'user_id'], 'required'],
+            [['date_range'], 'safe'],
             [['brief', 'content'], 'string'],
             [['user_id', 'status'], 'integer'],
             ['status', 'in', 'range' => [self::STATUS_DRAFT, self::STATUS_PUBLIC, self::STATUS_DELETED]],
