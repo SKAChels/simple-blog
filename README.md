@@ -7,6 +7,4 @@
 <h3>Installation</h3>
 <p>
     Apply migrations
-
-    yii migrate --migrationPath=@yii/rbac/migrations    
 </p>
